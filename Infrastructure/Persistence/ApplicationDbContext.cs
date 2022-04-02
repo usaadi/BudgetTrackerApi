@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using Domain.Common;
+using System.Reflection;
 
 namespace Infrastructure.Persistence;
 
@@ -11,8 +12,12 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        //modelBuilder.Entity<Category>().HasQueryFilter(p => !p.IsDeleted && p.UserUniqueId == currentUserUniqueId);
         modelBuilder.Entity<Category>().HasQueryFilter(p => !p.IsDeleted);
-        //modelBuilder.Entity<Category>().HasQueryFilter(p => p.UserUniqueId == currentUserUniqueId);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
