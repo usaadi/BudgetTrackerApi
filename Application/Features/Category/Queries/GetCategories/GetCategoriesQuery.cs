@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 public class GetCategoriesQuery : IRequest<CategoriesDto>
 {
-    public Guid UserUniqueId { get; set; }
     public CategoryType CategoryType { get; set; }
 }
 
@@ -17,6 +16,7 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
+    private readonly Guid _userUniqueId;
 
     public GetCategoriesQueryHandler(IApplicationDbContext context, IMapper mapper)
     {
@@ -27,7 +27,7 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
     public async Task<CategoriesDto> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
         var items = await _context.Category
-            .Where(x => x.UserUniqueId == request.UserUniqueId && x.CategoryType == request.CategoryType)
+            .Where(x => x.UserUniqueId == _userUniqueId && x.CategoryType == request.CategoryType)
             .OrderBy(x => x.Name)
             .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
             .ToListAsync();

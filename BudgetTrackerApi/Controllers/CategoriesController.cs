@@ -1,5 +1,6 @@
 namespace BudgetTrackerApi.Controllers;
 
+using Application.Features.Category.Commands.CreateCategory;
 using Application.Features.Category.Queries.GetCategories;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -22,5 +23,12 @@ public class CategoriesController : ApiControllerBase
     {
         return await Mediator.Send(
             new GetCategoriesQuery { CategoryType = CategoryType.Income, UserUniqueId = Guid.Empty });
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<long>> Create(CreateCategoryCommand command)
+    {
+        return await Mediator.Send(command);
     }
 }
