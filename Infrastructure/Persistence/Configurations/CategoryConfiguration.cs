@@ -1,13 +1,14 @@
 ﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations;
 
-public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+public class CategoryConfiguration : BaseEntityConfiguration<Category>
 {
-    public void Configure(EntityTypeBuilder<Category> builder)
+    public override void Configure(EntityTypeBuilder<Category> builder)
     {
+        base.Configure(builder);
+
         builder.Property(t => t.Name)
             .HasMaxLength(50);
 

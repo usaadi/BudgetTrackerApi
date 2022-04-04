@@ -10,6 +10,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public DbSet<Category> Category => Set<Category>();
 
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //modelBuilder.Entity<Category>().HasQueryFilter(p => !p.IsDeleted && p.UserUniqueId == currentUserUniqueId);
