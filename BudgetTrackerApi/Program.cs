@@ -1,6 +1,10 @@
 using Infrastructure;
 using Application;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Application.Common.Interfaces;
+using BudgetTrackerApi.Services;
+using BudgetTrackerApi.Filters;
+using FluentValidation.AspNetCore;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -21,7 +25,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
-builder.Services.AddControllers();
+builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddControllers(options =>
+    options.Filters.Add<ApiExceptionFilterAttribute>())
+        .AddFluentValidation(x => x.AutomaticValidationEnabled = false); ;
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

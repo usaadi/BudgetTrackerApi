@@ -15,18 +15,20 @@ public class CreateCategoryCommand : IRequest<long>
 public class CreateCategoryCommandCommandHandler : IRequestHandler<CreateCategoryCommand, long>
 {
     private readonly IApplicationDbContext _context;
-    private readonly Guid _userUniqueId;
+    private readonly ICurrentUserService _currentUserService;
 
-    public CreateCategoryCommandCommandHandler(IApplicationDbContext context)
+    public CreateCategoryCommandCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task<long> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request.Name, nameof(request.Name));
+        ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
 
-        var entity = new Category(request.CategoryType, request.Name, _userUniqueId, request.Description);
+        var entity = new Category(request.CategoryType, request.Name, _currentUserService.UserUniqueId.Value, request.Description);
 
         _context.Category.Add(entity);
 

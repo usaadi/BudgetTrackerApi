@@ -16,21 +16,24 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly Guid _userUniqueId;
+    private readonly ICurrentUserService _currentUserService;
 
-    public GetCategoriesQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetCategoriesQueryHandler(IApplicationDbContext context, IMapper mapper, ICurrentUserService currentUserService)
     {
         _context = context;
         _mapper = mapper;
+        _currentUserService = currentUserService;
     }
 
     public async Task<CategoriesDto> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
+
         var items = await _context.Category
-            .Where(x => x.UserUniqueId == _userUniqueId && x.CategoryType == request.CategoryType)
+            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.CategoryType == request.CategoryType)
             .OrderBy(x => x.Name)
             .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return new CategoriesDto
         {
