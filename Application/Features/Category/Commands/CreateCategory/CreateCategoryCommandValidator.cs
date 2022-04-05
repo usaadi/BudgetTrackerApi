@@ -18,7 +18,7 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
             .MustAsync(BeUniqueName).WithMessage("The specified name already exists.");
 
         RuleFor(v => v.Description)
-            .MaximumLength(100).WithMessage("Description must not exceed 50 characters.");
+            .MaximumLength(100).WithMessage("Description must not exceed 100 characters.");
     }
 
     public async Task<bool> BeUniqueName(CreateCategoryCommand command, string name, CancellationToken cancellationToken)
