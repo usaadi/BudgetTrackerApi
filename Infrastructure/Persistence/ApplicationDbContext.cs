@@ -25,7 +25,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    private void PrepareSaveChanges()
     {
         foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
@@ -43,8 +43,20 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                     break;
             }
         }
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        PrepareSaveChanges();
 
         var result = await base.SaveChangesAsync(cancellationToken);
         return result;
+    }
+
+    public override int SaveChanges()
+    {
+        PrepareSaveChanges();
+
+        return base.SaveChanges();
     }
 }

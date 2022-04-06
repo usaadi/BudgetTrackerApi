@@ -1,6 +1,7 @@
 namespace BudgetTrackerApi.Controllers;
 
 using Application.Features.Category.Commands.CreateCategory;
+using Application.Features.Category.Commands.DeleteCategory;
 using Application.Features.Category.Commands.UpdateCategory;
 using Application.Features.Category.Queries.GetCategories;
 using Domain.Enums;
@@ -39,5 +40,15 @@ public class CategoriesController : ApiControllerBase
     {
         command.uniqueId = uniqueId;
         return await Mediator.Send(command);
+    }
+
+    [HttpDelete("{uniqueId}")]
+    [Authorize]
+    public async Task<ActionResult> Delete(Guid uniqueId)
+    {
+        var command = new DeleteCategoryCommand();
+        command.UniqueId = uniqueId;
+        await Mediator.Send(command);
+        return NoContent();
     }
 }
