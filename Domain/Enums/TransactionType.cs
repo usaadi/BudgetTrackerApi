@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Enums;
 
-public enum CategoryType
+public enum TransactionType
 {
-    Expenses = 1,
-    Income = 2
+    Expenses,
+    Income
 }

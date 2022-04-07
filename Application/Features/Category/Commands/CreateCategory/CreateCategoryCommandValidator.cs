@@ -24,6 +24,6 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
     public async Task<bool> BeUniqueName(CreateCategoryCommand command, string name, CancellationToken cancellationToken)
     {
         return await _context.Category
-            .AllAsync(l => l.Name != name || command.CategoryType != l.CategoryType, cancellationToken);
+            .AllAsync(l => l.Name != name || (int)command.CategoryType != l.CategoryTypeLookupId, cancellationToken);
     }
 }

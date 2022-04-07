@@ -9,6 +9,7 @@ namespace Infrastructure.Persistence;
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public DbSet<Category> Category => Set<Category>();
+    public DbSet<Transaction> Transaction => Set<Transaction>();
 
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -19,6 +20,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         //modelBuilder.Entity<Category>().HasQueryFilter(p => !p.IsDeleted && p.UserUniqueId == currentUserUniqueId);
         modelBuilder.Entity<Category>().HasQueryFilter(p => !p.IsDeleted);
+        modelBuilder.Entity<Transaction>().HasQueryFilter(p => !p.IsDeleted);
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 

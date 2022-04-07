@@ -5,16 +5,18 @@ using Domain.Enums;
 
 public class Category : BaseEntity, IUserSpecific
 {
-    public Category(CategoryType categoryType, string name, Guid userUniqueId, string? description = null)
+    public Category(int categoryTypeLookupId, string name, Guid userUniqueId, string? description = null)
     {
-        CategoryType = categoryType;
+        CategoryTypeLookupId = categoryTypeLookupId;
         Name = name;
         UserUniqueId = userUniqueId;
         Description = description;
     }
 
-    public CategoryType CategoryType { get; set; }
-    public string Name { get; set; }
+    public int CategoryTypeLookupId { get; set; }
     public Guid UserUniqueId { get; set; }
+    public string Name { get; set; }
     public string? Description { get; set; }
+
+    public CategoryTypeLookup CategoryTypeLookup { get; set; } = null!;
 }

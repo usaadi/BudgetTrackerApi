@@ -32,6 +32,6 @@ public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategoryCo
         ArgumentNullException.ThrowIfNull(category, nameof(category));
 
         return await _context.Category
-            .AllAsync(x => x.Name != name || x.CategoryType != category.CategoryType || x.UniqueId == command.uniqueId, cancellationToken);
+            .AllAsync(x => x.Name != name || x.CategoryTypeLookupId != category.CategoryTypeLookupId || x.UniqueId == command.uniqueId, cancellationToken);
     }
 }

@@ -30,7 +30,7 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
 
         var items = await _context.Category
-            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.CategoryType == request.CategoryType)
+            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.CategoryTypeLookupId == (int)request.CategoryType)
             .OrderBy(x => x.Name)
             .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);

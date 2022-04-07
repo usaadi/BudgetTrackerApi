@@ -28,7 +28,7 @@ public class CreateCategoryCommandCommandHandler : IRequestHandler<CreateCategor
         ArgumentNullException.ThrowIfNull(request.Name, nameof(request.Name));
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
 
-        var entity = new Category(request.CategoryType, request.Name, _currentUserService.UserUniqueId.Value, request.Description);
+        var entity = new Category((int)request.CategoryType, request.Name, _currentUserService.UserUniqueId.Value, request.Description);
 
         _context.Category.Add(entity);
 
