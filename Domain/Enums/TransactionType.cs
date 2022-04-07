@@ -8,6 +8,6 @@ namespace Domain.Enums;
 
 public enum TransactionType
 {
-    Expenses,
-    Income
+    Expenses = 1,
+    Income = 2
 }

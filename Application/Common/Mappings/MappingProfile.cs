@@ -1,4 +1,5 @@
 ﻿using Application.Features.Category.Queries.GetCategories;
+using Application.Features.Transaction.Queries.GetTransactions;
 using AutoMapper;
 using Domain.Entities;
 
@@ -10,12 +11,9 @@ public class MappingProfile : Profile
     {
         CreateMap<Category, CategoryDto>()
             .ForMember(x => x.CategoryType, opt => opt.MapFrom(y => y.CategoryTypeLookupId));
-        CreateMap<CategoryDto, Category>()
-            .ForMember(x => x.CategoryTypeLookupId, opt => opt.MapFrom(y => y.CategoryType));
 
-        //CreateMap<Transaction, TransactionDto>()
-        //    .ForMember(x => x.TransactionType, opt => opt.MapFrom(y => y.TransactionTypeLookupId));
-        //CreateMap<TransactionyDto, Transaction>()
-        //    .ForMember(x => x.TransactionTypeLookupId, opt => opt.MapFrom(y => y.TransactionType));
+        CreateMap<Transaction, TransactionDto>()
+            .ForMember(x => x.TransactionType, opt => opt.MapFrom(y => y.TransactionTypeLookupId))
+            .ForMember(x => x.CategoryName, opt => opt.MapFrom(y => y.Category.Name));
     }
 }
