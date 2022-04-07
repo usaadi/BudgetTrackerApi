@@ -29,7 +29,7 @@ public class DeleteCategoryCommandCommandHandler : IRequestHandler<DeleteCategor
     {
         if (request.UniqueId == Guid.Empty)
         {
-            throw new ArgumentException("uniqueId in delete category command was empty", nameof(request.UniqueId));
+            throw new ArgumentException("uniqueId in delete category command was empty", nameof(request));
         }
 
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));

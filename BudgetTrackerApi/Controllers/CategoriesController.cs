@@ -16,7 +16,7 @@ public class CategoriesController : ApiControllerBase
     public async Task<ActionResult<CategoriesDto>> GetExpensesCategories()
     {
         return await Mediator.Send(
-            new GetCategoriesQuery { CategoryType = CategoryType.Expenses });
+            new GetCategoriesQuery { TransactionType = TransactionType.Expenses });
     }
 
     [HttpGet("income")]
@@ -24,7 +24,7 @@ public class CategoriesController : ApiControllerBase
     public async Task<ActionResult<CategoriesDto>> GetIncomeCategories()
     {
         return await Mediator.Send(
-            new GetCategoriesQuery { CategoryType = CategoryType.Income });
+            new GetCategoriesQuery { TransactionType = TransactionType.Income });
     }
 
     [HttpPost]
@@ -46,8 +46,10 @@ public class CategoriesController : ApiControllerBase
     [Authorize]
     public async Task<ActionResult> Delete(Guid uniqueId)
     {
-        var command = new DeleteCategoryCommand();
-        command.UniqueId = uniqueId;
+        var command = new DeleteCategoryCommand
+        {
+            UniqueId = uniqueId
+        };
         await Mediator.Send(command);
         return NoContent();
     }

@@ -27,11 +27,11 @@ public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategoryCo
     {
         var category = await _context.Category
             .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId && x.UniqueId == command.uniqueId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         ArgumentNullException.ThrowIfNull(category, nameof(category));
 
         return await _context.Category
-            .AllAsync(x => x.Name != name || x.CategoryTypeLookupId != category.CategoryTypeLookupId || x.UniqueId == command.uniqueId, cancellationToken);
+            .AllAsync(x => x.Name != name || x.TransactionTypeLookupId != category.TransactionTypeLookupId || x.UniqueId == command.uniqueId, cancellationToken);
     }
 }

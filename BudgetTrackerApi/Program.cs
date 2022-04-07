@@ -5,10 +5,25 @@ using Application.Common.Interfaces;
 using BudgetTrackerApi.Services;
 using BudgetTrackerApi.Filters;
 using FluentValidation.AspNetCore;
+using Serilog;
+using Npgsql;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, config) =>
+{
+    var conStrBuilder = new NpgsqlConnectionStringBuilder(
+            context.Configuration.GetConnectionString("DefaultConnection"));
+
+    var password = context.Configuration["DbPassword"];
+    conStrBuilder.Password = password;
+
+    var connectionString = conStrBuilder.ConnectionString;
+    config.WriteTo.PostgreSQL(connectionString, "logs", needAutoCreateTable: true)
+        .MinimumLevel.Warning();
+});
 
 // Add services to the container.
 builder.Services.AddCors(options =>

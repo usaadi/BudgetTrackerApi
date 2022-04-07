@@ -7,7 +7,7 @@ using MediatR;
 
 public class CreateCategoryCommand : IRequest<long>
 {
-    public CategoryType CategoryType { get; set; }
+    public TransactionType TransactionType { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
 }
@@ -28,7 +28,13 @@ public class CreateCategoryCommandCommandHandler : IRequestHandler<CreateCategor
         ArgumentNullException.ThrowIfNull(request.Name, nameof(request.Name));
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
 
-        var entity = new Category((int)request.CategoryType, request.Name, _currentUserService.UserUniqueId.Value, request.Description);
+        var entity = new Category
+        {
+            TransactionTypeLookupId = (int)request.TransactionType,
+            Name = request.Name,
+            Description = request.Description,
+            UserUniqueId = _currentUserService.UserUniqueId.Value
+        };
 
         _context.Category.Add(entity);
 

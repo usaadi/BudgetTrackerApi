@@ -2,6 +2,7 @@
 using Application.Features.Transaction.Queries.GetTransactions;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Application.Common.Mappings;
 
@@ -10,10 +11,9 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<Category, CategoryDto>()
-            .ForMember(x => x.CategoryType, opt => opt.MapFrom(y => y.CategoryTypeLookupId));
+            .ForMember(x => x.TransactionType, opt => opt.MapFrom(y => (TransactionType)y.TransactionTypeLookupId));
 
         CreateMap<Transaction, TransactionDto>()
-            .ForMember(x => x.TransactionType, opt => opt.MapFrom(y => y.TransactionTypeLookupId))
-            .ForMember(x => x.CategoryName, opt => opt.MapFrom(y => y.Category.Name));
+            .ForMember(x => x.TransactionType, opt => opt.MapFrom(y => (TransactionType)y.Category.TransactionTypeLookupId));
     }
 }

@@ -30,7 +30,8 @@ public class GetTransactionQueryHandler : IRequestHandler<GetTransactionsQuery, 
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
 
         var items = await _context.Transaction
-            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.TransactionTypeLookupId == (int)request.TransactionType)
+            .Include(x => x.Category)
+            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.Category.TransactionTypeLookupId == (int)request.TransactionType)
             .OrderByDescending(x => x.TransactionDate)
             .ProjectTo<TransactionDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);

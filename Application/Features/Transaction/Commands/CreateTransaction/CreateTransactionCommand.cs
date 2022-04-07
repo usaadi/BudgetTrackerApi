@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 public class CreateTransactionCommand : IRequest<long>
 {
-    public TransactionType TransactionType { get; set; }
     public decimal Amount { get; set; }
     public Guid CategoryUniqueId { get; set; }
     public DateTime TransactionDate { get; set; }
@@ -42,11 +41,11 @@ public class CreateTransactionCommandCommandHandler : IRequestHandler<CreateTran
 
         var entity = new Transaction
         {
-            TransactionTypeLookupId = (int)request.TransactionType,
             Amount = request.Amount,
             CategoryId = category.Id,
             TransactionDate = request.TransactionDate,
             Description = request.Description,
+            UserUniqueId = _currentUserService.UserUniqueId.Value
         };
 
         _context.Transaction.Add(entity);

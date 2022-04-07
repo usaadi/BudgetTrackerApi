@@ -1,8 +1,6 @@
 namespace BudgetTrackerApi.Controllers;
 
-using Application.Features.Category.Commands.CreateCategory;
-using Application.Features.Category.Commands.DeleteCategory;
-using Application.Features.Category.Commands.UpdateCategory;
+using Application.Features.Transaction.Commands.CreateTransaction;
 using Application.Features.Transaction.Queries.GetTransactions;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -19,20 +17,20 @@ public class TransactionsController : ApiControllerBase
             new GetTransactionsQuery { TransactionType = TransactionType.Expenses });
     }
 
-    //[HttpGet("income")]
-    //[Authorize]
-    //public async Task<ActionResult<CategoriesDto>> GetIncomeCategories()
-    //{
-    //    return await Mediator.Send(
-    //        new GetCategoriesQuery { CategoryType = CategoryType.Income });
-    //}
+    [HttpGet("income")]
+    [Authorize]
+    public async Task<ActionResult<TransactionsDto>> GetIncomeTransactions()
+    {
+        return await Mediator.Send(
+            new GetTransactionsQuery { TransactionType = TransactionType.Income });
+    }
 
-    //[HttpPost]
-    //[Authorize]
-    //public async Task<ActionResult<long>> Create(CreateCategoryCommand command)
-    //{
-    //    return await Mediator.Send(command);
-    //}
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<long>> Create(CreateTransactionCommand command)
+    {
+        return await Mediator.Send(command);
+    }
 
     //[HttpPatch("{uniqueId}")]
     //[Authorize]

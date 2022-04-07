@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class GetCategoriesQuery : IRequest<CategoriesDto>
 {
-    public CategoryType CategoryType { get; set; }
+    public TransactionType TransactionType { get; set; }
 }
 
 public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, CategoriesDto>
@@ -30,7 +30,7 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
 
         var items = await _context.Category
-            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.CategoryTypeLookupId == (int)request.CategoryType)
+            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.TransactionTypeLookupId == (int)request.TransactionType)
             .OrderBy(x => x.Name)
             .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
