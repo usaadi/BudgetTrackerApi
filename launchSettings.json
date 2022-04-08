@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "budgettrackerapi",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "budgettrackerapi": "StartDebugging",
+        "db": "StartWithoutDebugging",
+        "pgadmin": "StartWithoutDebugging"
+      }
+    }
+  }
+}

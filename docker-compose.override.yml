@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  budgettrackerapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:4040;http://+:80
+    ports:
+      - "80"
+      - "4040:4040"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
