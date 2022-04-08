@@ -9,20 +9,20 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 public class TransactionsController : ApiControllerBase
 {
-    [HttpGet("expenses")]
+    [HttpPost("expenses")]
     [Authorize]
-    public async Task<ActionResult<TransactionsDto>> GetExpensesTransactions()
+    public async Task<ActionResult<TransactionsDto>> GetExpensesTransactions(GetTransactionsQuery query)
     {
-        return await Mediator.Send(
-            new GetTransactionsQuery { TransactionType = TransactionType.Expenses });
+        query.TransactionType = TransactionType.Expenses;
+        return await Mediator.Send(query);
     }
 
-    [HttpGet("income")]
+    [HttpPost("income")]
     [Authorize]
-    public async Task<ActionResult<TransactionsDto>> GetIncomeTransactions()
+    public async Task<ActionResult<TransactionsDto>> GetIncomeTransactions(GetTransactionsQuery query)
     {
-        return await Mediator.Send(
-            new GetTransactionsQuery { TransactionType = TransactionType.Income });
+        query.TransactionType = TransactionType.Income;
+        return await Mediator.Send(query);
     }
 
     [HttpPost]

@@ -10,6 +10,8 @@ namespace Application.Features.Transaction.Queries.GetTransactions;
 public class GetTransactionsQuery : IRequest<TransactionsDto>
 {
     public TransactionType TransactionType { get; set; }
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
 }
 
 public class GetTransactionQueryHandler : IRequestHandler<GetTransactionsQuery, TransactionsDto>
@@ -28,10 +30,23 @@ public class GetTransactionQueryHandler : IRequestHandler<GetTransactionsQuery, 
     public async Task<TransactionsDto> Handle(GetTransactionsQuery request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
+        ArgumentNullException.ThrowIfNull(request, nameof(request));
 
-        var items = await _context.Transaction
+        var itemsQuery = _context.Transaction
             .Include(x => x.Category)
-            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.Category.TransactionTypeLookupId == (int)request.TransactionType)
+            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.Category.TransactionTypeLookupId == (int)request.TransactionType);
+
+        if (request.FromDate is not null)
+        {
+            itemsQuery = itemsQuery.Where(x => x.TransactionDate >= request.FromDate);
+        }
+
+        if (request.ToDate is not null)
+        {
+            itemsQuery = itemsQuery.Where(x => x.TransactionDate <= request.ToDate);
+        }
+
+        var items = await itemsQuery
             .OrderByDescending(x => x.TransactionDate)
             .ProjectTo<TransactionDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
