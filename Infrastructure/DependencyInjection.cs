@@ -14,7 +14,12 @@ public static class DependencyInjection
         var conStrBuilder = new NpgsqlConnectionStringBuilder(
             configuration.GetConnectionString("DefaultConnection"));
 
-        var password = configuration["DbPassword"];
+        var password = configuration["DB_PASSWORD"];
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        }
+
         conStrBuilder.Password = password;
 
         var connectionString = conStrBuilder.ConnectionString;

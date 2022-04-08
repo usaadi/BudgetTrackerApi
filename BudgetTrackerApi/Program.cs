@@ -7,6 +7,7 @@ using BudgetTrackerApi.Filters;
 using FluentValidation.AspNetCore;
 using Serilog;
 using Npgsql;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -14,10 +15,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, config) =>
 {
+    config.WriteTo.Console().MinimumLevel.Warning();
+
     var conStrBuilder = new NpgsqlConnectionStringBuilder(
             context.Configuration.GetConnectionString("DefaultConnection"));
 
-    var password = context.Configuration["DbPassword"];
+    var password = context.Configuration["DB_PASSWORD"];
+    if (string.IsNullOrWhiteSpace(password))
+    {
+        password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+    }
     conStrBuilder.Password = password;
 
     var connectionString = conStrBuilder.ConnectionString;
@@ -29,9 +36,10 @@ builder.Host.UseSerilog((context, config) =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-                      builder =>
+                      b =>
                       {
-                          builder.WithOrigins("https://localhost:3000")
+                          b.WithOrigins("https://localhost:3000",
+                                        "https://budget-tracker.nfshost.com")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                       });
@@ -77,7 +85,12 @@ app.UseSwagger();
 app.UseSwaggerUI();
 //}
 
-app.UseHttpsRedirection();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+});
+
+//app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
