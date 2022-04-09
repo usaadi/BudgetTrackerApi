@@ -10,18 +10,18 @@ using Microsoft.EntityFrameworkCore;
 
 public class UpdateCategoryCommand : IRequest<CategoryDto>
 {
-    public Guid uniqueId { get; set; }
+    public Guid UniqueId { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
 }
 
-public class UpdateCategoryCommandCommandHandler : IRequestHandler<UpdateCategoryCommand, CategoryDto>
+public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, CategoryDto>
 {
     private readonly IApplicationDbContext _context;
     private readonly ICurrentUserService _currentUserService;
     private readonly IMapper _mapper;
 
-    public UpdateCategoryCommandCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService, IMapper mapper)
+    public UpdateCategoryCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService, IMapper mapper)
     {
         _context = context;
         _currentUserService = currentUserService;
@@ -32,10 +32,11 @@ public class UpdateCategoryCommandCommandHandler : IRequestHandler<UpdateCategor
     {
         ArgumentNullException.ThrowIfNull(request.Name, nameof(request.Name));
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
+        if (request.UniqueId == default) { throw new ArgumentException("request.UniqueId is empty", nameof(request)); }
 
         var entity = await _context.Category
-            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId && x.UniqueId == request.uniqueId)
-            .FirstOrDefaultAsync();
+            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId && x.UniqueId == request.UniqueId)
+            .FirstOrDefaultAsync(cancellationToken);
 
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
 

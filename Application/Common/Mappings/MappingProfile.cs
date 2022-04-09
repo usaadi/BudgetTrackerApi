@@ -10,8 +10,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Category, CategoryDto>()
-            .ForMember(x => x.TransactionType, opt => opt.MapFrom(y => (TransactionType)y.TransactionTypeLookupId));
+        CreateMap<Category, CategoryDto>();
 
         CreateMap<Transaction, TransactionDto>()
             .ForMember(x => x.TransactionType, opt => opt.MapFrom(y => (TransactionType)y.Category.TransactionTypeLookupId));

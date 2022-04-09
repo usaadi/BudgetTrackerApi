@@ -6,26 +6,25 @@ using Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Category.Commands.DeleteCategory;
+namespace Application.Features.Transaction.Commands.DeleteTransaction;
 
-public class DeleteCategoryCommand : IRequest
+public class DeleteTransactionCommand : IRequest
 {
     public Guid UniqueId { get; set; }
-    public bool AllowDeleteRelatedData { get; set; }
 }
 
-public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand>
+public class DeleteTransactionCommandHandler : IRequestHandler<DeleteTransactionCommand>
 {
     private readonly IApplicationDbContext _context;
     private readonly ICurrentUserService _currentUserService;
 
-    public DeleteCategoryCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+    public DeleteTransactionCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
         _currentUserService = currentUserService;
     }
 
-    public async Task<Unit> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteTransactionCommand request, CancellationToken cancellationToken)
     {
         if (request.UniqueId == Guid.Empty)
         {
@@ -34,7 +33,7 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
 
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
 
-        var entity = await _context.Category
+        var entity = await _context.Transaction
             .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId && x.UniqueId == request.UniqueId)
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -42,7 +41,7 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
 
         entity.IsDeleted = true;
 
-        _context.Category.Update(entity);
+        _context.Transaction.Update(entity);
 
         await _context.SaveChangesAsync(cancellationToken);
 

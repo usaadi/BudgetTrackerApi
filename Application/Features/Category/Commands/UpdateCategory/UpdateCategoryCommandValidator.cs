@@ -26,12 +26,12 @@ public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategoryCo
     public async Task<bool> BeUniqueName(UpdateCategoryCommand command, string name, CancellationToken cancellationToken)
     {
         var category = await _context.Category
-            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId && x.UniqueId == command.uniqueId)
+            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId && x.UniqueId == command.UniqueId)
             .FirstOrDefaultAsync(cancellationToken);
 
         ArgumentNullException.ThrowIfNull(category, nameof(category));
 
         return await _context.Category
-            .AllAsync(x => x.Name != name || x.TransactionTypeLookupId != category.TransactionTypeLookupId || x.UniqueId == command.uniqueId, cancellationToken);
+            .AllAsync(x => x.Name != name || x.TransactionTypeLookupId != category.TransactionTypeLookupId || x.UniqueId == command.UniqueId, cancellationToken);
     }
 }

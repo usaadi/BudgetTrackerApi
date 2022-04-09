@@ -34,6 +34,7 @@ public class GetTransactionQueryHandler : IRequestHandler<GetTransactionsQuery, 
 
         var itemsQuery = _context.Transaction
             .Include(x => x.Category)
+            .ThenInclude(x => x.TransactionTypeLookup)
             .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.Category.TransactionTypeLookupId == (int)request.TransactionType);
 
         if (request.FromDate is not null)

@@ -12,12 +12,12 @@ public class CreateCategoryCommand : IRequest<long>
     public string? Description { get; set; }
 }
 
-public class CreateCategoryCommandCommandHandler : IRequestHandler<CreateCategoryCommand, long>
+public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, long>
 {
     private readonly IApplicationDbContext _context;
     private readonly ICurrentUserService _currentUserService;
 
-    public CreateCategoryCommandCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+    public CreateCategoryCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
         _currentUserService = currentUserService;

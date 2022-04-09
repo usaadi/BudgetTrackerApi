@@ -34,11 +34,10 @@ public class CategoriesController : ApiControllerBase
         return await Mediator.Send(command);
     }
 
-    [HttpPatch("{uniqueId}")]
+    [HttpPatch]
     [Authorize]
-    public async Task<ActionResult<CategoryDto>> Update(UpdateCategoryCommand command, Guid uniqueId)
+    public async Task<ActionResult<CategoryDto>> Update(UpdateCategoryCommand command)
     {
-        command.uniqueId = uniqueId;
         return await Mediator.Send(command);
     }
 
