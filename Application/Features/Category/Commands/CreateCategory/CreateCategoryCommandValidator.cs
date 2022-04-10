@@ -31,7 +31,7 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
         }
 
         return await _context.Category
-            .AllAsync(x => x.Name != name || x.TransactionTypeLookupId != (int)command.TransactionType
+            .AllAsync(x => x.Name.ToLower() != name.ToLower() || x.TransactionTypeLookupId != (int)command.TransactionType
             || x.UserUniqueId != _currentUserService.UserUniqueId, cancellationToken);
     }
 }

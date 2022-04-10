@@ -52,4 +52,17 @@ public class CategoriesController : ApiControllerBase
         await Mediator.Send(command);
         return NoContent();
     }
+
+    [HttpDelete("with-related-data/{uniqueId}")]
+    [Authorize]
+    public async Task<ActionResult> DeleteWithRelatedData(Guid uniqueId)
+    {
+        var command = new DeleteCategoryCommand
+        {
+            UniqueId = uniqueId,
+            AllowDeleteRelatedData = true
+        };
+        await Mediator.Send(command);
+        return NoContent();
+    }
 }

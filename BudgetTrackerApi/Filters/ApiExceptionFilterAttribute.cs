@@ -16,6 +16,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
                 { typeof(ValidationException), HandleValidationException },
+                { typeof(RelatedDataExistException), HandleRelatedDataExistException },
                 //{ typeof(NotFoundException), HandleNotFoundException },
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
                 //{ typeof(ForbiddenAccessException), HandleForbiddenAccessException },
@@ -57,6 +58,23 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         };
 
         context.Result = new BadRequestObjectResult(details);
+
+        context.ExceptionHandled = true;
+    }
+
+    private void HandleRelatedDataExistException(ExceptionContext context)
+    {
+        var details = new ProblemDetails
+        {
+            Status = StatusCodes.Status409Conflict,
+            Title = "Related Data Exists",
+            Type = "https://tools.ietf.org/html/rfc7235#section-3.1"
+        };
+
+        context.Result = new ObjectResult(details)
+        {
+            StatusCode = StatusCodes.Status409Conflict
+        };
 
         context.ExceptionHandled = true;
     }
