@@ -7,10 +7,12 @@ namespace Application.Features.Category.Commands.CreateCategory;
 public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
 {
     private readonly IApplicationDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public CreateCategoryCommandValidator(IApplicationDbContext context)
+    public CreateCategoryCommandValidator(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
 
         RuleFor(v => v.Name)
             .NotEmpty().WithMessage("Name is required.")
@@ -23,7 +25,13 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
 
     public async Task<bool> BeUniqueName(CreateCategoryCommand command, string name, CancellationToken cancellationToken)
     {
+        if (_currentUserService.UserUniqueId == null || _currentUserService.UserUniqueId == default)
+        {
+            throw new Exception("UserUniqueId is empty");
+        }
+
         return await _context.Category
-            .AllAsync(l => l.Name != name || (int)command.TransactionType != l.TransactionTypeLookupId, cancellationToken);
+            .AllAsync(x => x.Name != name || x.TransactionTypeLookupId != (int)command.TransactionType
+            || x.UserUniqueId != _currentUserService.UserUniqueId, cancellationToken);
     }
 }
