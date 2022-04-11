@@ -1,7 +1,6 @@
 namespace BudgetTrackerApi.Controllers;
 
 using Application.Features.Summary.Queries.GetSummary;
-using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
