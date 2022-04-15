@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Domain.Enums;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,9 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
 
         RuleFor(v => v.Description)
             .MaximumLength(100).WithMessage("Description must not exceed 100 characters.");
+
+        RuleFor(v => v.TransactionType)
+            .MustAsync(NotExceedLimit).WithMessage("You have exceeded limit of created categories. Please consider upgrading to add more.");
     }
 
     public async Task<bool> BeUniqueName(CreateCategoryCommand command, string name, CancellationToken cancellationToken)
@@ -33,5 +37,23 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
         return await _context.Category
             .AllAsync(x => x.Name.ToLower() != name.ToLower() || x.TransactionTypeLookupId != (int)command.TransactionType
             || x.UserUniqueId != _currentUserService.UserUniqueId, cancellationToken);
+    }
+
+    public async Task<bool> NotExceedLimit(CreateCategoryCommand command, TransactionType transactionType, CancellationToken cancellationToken)
+    {
+        const int defaultMaximumCategories = 40;
+
+        _ = int.TryParse(System.Environment.GetEnvironmentVariable("MAX_CATEGORIES_FREE"), out int maxCategories);
+
+        if (maxCategories <= 0)
+        {
+            maxCategories = defaultMaximumCategories;
+        }
+
+        var count = await _context.Category
+                .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId)
+                .CountAsync();
+
+        return count < maxCategories;
     }
 }
