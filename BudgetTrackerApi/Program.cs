@@ -8,6 +8,7 @@ using FluentValidation.AspNetCore;
 using Serilog;
 using Npgsql;
 using Microsoft.AspNetCore.HttpOverrides;
+using Helpers;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -32,14 +33,16 @@ builder.Host.UseSerilog((context, config) =>
         .MinimumLevel.Warning();
 });
 
+var configurationHelper = new ConfigurationHelper(builder.Configuration);
+string[] origins = configurationHelper.GetStringArray("CorsOrigins");
+
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       b =>
                       {
-                          b.WithOrigins("https://localhost:3000",
-                                        "https://budget-tracker.nfshost.com")
+                          b.WithOrigins(origins)
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                       });
@@ -47,6 +50,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+
 
 builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
