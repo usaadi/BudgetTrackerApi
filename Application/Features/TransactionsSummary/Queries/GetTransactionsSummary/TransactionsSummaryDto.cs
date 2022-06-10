@@ -8,5 +8,6 @@
         }
 
         public List<TransactionsSummaryItemDto> Items { get; set; }
+        public int TotalCount { get; set; }
     }
 }

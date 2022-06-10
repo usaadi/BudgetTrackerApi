@@ -8,4 +8,5 @@ public class TransactionsDto
     }
 
     public IList<TransactionDto> Items { get; set; }
+    public int TotalCount { get; set; }
 }

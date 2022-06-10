@@ -12,6 +12,8 @@ public class GetTransactionsSummaryQuery : IRequest<TransactionsSummaryDto>
     public TransactionType TransactionType { get; set; }
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
+    public int PageSize { get; set; }
+    public int PageNumber { get; set; }
 }
 
 public class GetTransactionsSummaryQueryHandler : IRequestHandler<GetTransactionsSummaryQuery, TransactionsSummaryDto>
@@ -47,9 +49,14 @@ public class GetTransactionsSummaryQueryHandler : IRequestHandler<GetTransaction
             itemsQuery = itemsQuery.Where(x => x.TransactionDate <= request.ToDate);
         }
 
+        int limit = (request.PageSize > 0 && request.PageNumber > 0) ? request.PageSize : 0;
+        int offset = (request.PageNumber - 1) * limit;
+
         var items = await itemsQuery
             .GroupBy(x => x.Category.Name)
             .OrderBy(g => g.Key)
+            .Skip(offset)
+            .Take(limit)
             .Select(group => new TransactionsSummaryItemDto
             {
                 CategoryName = group.Key,
@@ -57,9 +64,12 @@ public class GetTransactionsSummaryQueryHandler : IRequestHandler<GetTransaction
             })
             .ToListAsync(cancellationToken);
 
+        int totalCount = await itemsQuery.GroupBy(x => x.Category.Name).CountAsync(cancellationToken);
+
         return new TransactionsSummaryDto
         {
-            Items = items
+            Items = items,
+            TotalCount = totalCount
         };
     }
 }
