@@ -41,7 +41,7 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
 
     public async Task<bool> NotExceedLimit(CreateCategoryCommand command, TransactionType transactionType, CancellationToken cancellationToken)
     {
-        const int defaultMaximumCategories = 40;
+        const int defaultMaximumCategories = 50;
 
         _ = int.TryParse(System.Environment.GetEnvironmentVariable("MAX_CATEGORIES_FREE"), out int maxCategories);
 
@@ -52,7 +52,7 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
 
         var count = await _context.Category
                 .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId)
-                .CountAsync();
+                .CountAsync(cancellationToken);
 
         return count < maxCategories;
     }

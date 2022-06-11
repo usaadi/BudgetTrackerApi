@@ -32,7 +32,7 @@ public class CreateTransactionCommandValidator : AbstractValidator<CreateTransac
 
     public async Task<bool> NotExceedLimit(CreateTransactionCommand command, DateTime transactionDate, CancellationToken cancellationToken)
     {
-        const int defaultMaximumTransactions = 20;
+        const int defaultMaximumTransactions = 50;
 
         _ = int.TryParse(System.Environment.GetEnvironmentVariable("MAX_TRANSACTIONS_FREE"), out int maxTransactions);
 

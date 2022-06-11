@@ -11,20 +11,30 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 public class CategoriesController : ApiControllerBase
 {
-    [HttpGet("expenses")]
+    [HttpGet("expenses/{pageSize}/{pageNumber}")]
     [Authorize]
-    public async Task<ActionResult<CategoriesDto>> GetExpensesCategories()
+    public async Task<ActionResult<CategoriesDto>> GetExpensesCategories(int pageSize, int pageNumber)
     {
         return await Mediator.Send(
-            new GetCategoriesQuery { TransactionType = TransactionType.Expenses });
+            new GetCategoriesQuery
+            {
+                TransactionType = TransactionType.Expenses,
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            });
     }
 
-    [HttpGet("income")]
+    [HttpGet("income/{pageSize}/{pageNumber}")]
     [Authorize]
-    public async Task<ActionResult<CategoriesDto>> GetIncomeCategories()
+    public async Task<ActionResult<CategoriesDto>> GetIncomeCategories(int pageSize, int pageNumber)
     {
         return await Mediator.Send(
-            new GetCategoriesQuery { TransactionType = TransactionType.Income });
+            new GetCategoriesQuery
+            {
+                TransactionType = TransactionType.Income,
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            });
     }
 
     [HttpPost]

@@ -59,7 +59,9 @@ public class GetTransactionQueryHandler : IRequestHandler<GetTransactionsQuery, 
             .ProjectTo<TransactionDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
-        int totalCount = await itemsQuery.CountAsync(cancellationToken);
+        int totalCount = await itemsQuery
+            .Where(x => !x.IsDeleted && !x.Category.IsDeleted)
+            .CountAsync(cancellationToken);
 
         return new TransactionsDto
         {

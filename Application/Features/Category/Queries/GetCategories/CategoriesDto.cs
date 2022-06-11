@@ -8,4 +8,5 @@ public class CategoriesDto
     }
 
     public IList<CategoryDto> Items { get; set; }
+    public int TotalCount { get; internal set; }
 }

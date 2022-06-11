@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 public class GetCategoriesQuery : IRequest<CategoriesDto>
 {
     public TransactionType TransactionType { get; set; }
+    public int PageSize { get; set; }
+    public int PageNumber { get; set; }
 }
 
 public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, CategoriesDto>
@@ -29,15 +31,28 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
     {
         ArgumentNullException.ThrowIfNull(_currentUserService.UserUniqueId, nameof(_currentUserService.UserUniqueId));
 
-        var items = await _context.Category
-            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value && x.TransactionTypeLookupId == (int)request.TransactionType)
+        int limit = (request.PageSize > 0 && request.PageNumber > 0) ? request.PageSize : 0;
+        int offset = (request.PageNumber - 1) * limit;
+
+        var itemsQuery = _context.Category
+            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value &&
+            x.TransactionTypeLookupId == (int)request.TransactionType);
+
+        var items = await itemsQuery
             .OrderBy(x => x.Name)
+            .Skip(offset)
+            .Take(limit)
             .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
+        int totalCount = await itemsQuery
+            .Where(x => !x.IsDeleted)
+            .CountAsync(cancellationToken);
+
         return new CategoriesDto
         {
-            Items = items
+            Items = items,
+            TotalCount = totalCount
         };
     }
 }
