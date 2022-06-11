@@ -1,43 +1,78 @@
+namespace BudgetTrackerApi.Controllers;
+
+using Application.Features.Category.Commands.CreateCategory;
+using Application.Features.Category.Commands.DeleteCategory;
+using Application.Features.Category.Commands.UpdateCategory;
+using Application.Features.Category.Queries.GetCategories;
+using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BudgetTrackerApi.Controllers
+[ApiController]
+public class CategoriesController : ApiControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class CategoriesController : ControllerBase
+    [HttpGet("expenses/{pageSize}/{pageNumber}")]
+    [Authorize]
+    public async Task<ActionResult<CategoriesDto>> GetExpensesCategories(int pageSize, int pageNumber)
     {
-        private static readonly string[] Summaries = new[]
+        return await Mediator.Send(
+            new GetCategoriesQuery
+            {
+                TransactionType = TransactionType.Expenses,
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            });
+    }
+
+    [HttpGet("income/{pageSize}/{pageNumber}")]
+    [Authorize]
+    public async Task<ActionResult<CategoriesDto>> GetIncomeCategories(int pageSize, int pageNumber)
+    {
+        return await Mediator.Send(
+            new GetCategoriesQuery
+            {
+                TransactionType = TransactionType.Income,
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            });
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult<long>> Create(CreateCategoryCommand command)
+    {
+        return await Mediator.Send(command);
+    }
+
+    [HttpPatch]
+    [Authorize]
+    public async Task<ActionResult<CategoryDto>> Update(UpdateCategoryCommand command)
+    {
+        return await Mediator.Send(command);
+    }
+
+    [HttpDelete("{uniqueId}")]
+    [Authorize]
+    public async Task<ActionResult> Delete(Guid uniqueId)
+    {
+        var command = new DeleteCategoryCommand
         {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            UniqueId = uniqueId
         };
+        await Mediator.Send(command);
+        return NoContent();
+    }
 
-        private static readonly string[] ExpensesCategories = new[]
+    [HttpDelete("with-related-data/{uniqueId}")]
+    [Authorize]
+    public async Task<ActionResult> DeleteWithRelatedData(Guid uniqueId)
+    {
+        var command = new DeleteCategoryCommand
         {
-        "Groceries", "Car Gas", "Heating", "Electricity", "Water", "Clothes", "Eating Out", "Take Out"
+            UniqueId = uniqueId,
+            AllowDeleteRelatedData = true
         };
-
-        private static readonly string[] IncomeCategories = new[]
-        {
-        "Salary", "Rent"
-        };
-
-        private readonly ILogger<CategoriesController> _logger;
-
-        public CategoriesController(ILogger<CategoriesController> logger)
-        {
-            _logger = logger;
-        }
-
-        [HttpGet("expenses")]
-        public async Task<ActionResult<IEnumerable<string>>> GetExpensesCategories()
-        {
-            return await Task.FromResult(ExpensesCategories);
-        }
-
-        [HttpGet("income")]
-        public async Task<ActionResult<IEnumerable<string>>> GetIncomeCategories()
-        {
-            return await Task.FromResult(IncomeCategories);
-        }
+        await Mediator.Send(command);
+        return NoContent();
     }
 }

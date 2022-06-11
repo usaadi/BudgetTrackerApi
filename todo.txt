@@ -1,0 +1,3 @@
+- add currentUserService, inject it into db context and use it for created and modified by.
+- use the property AllowDeleteRelatedData in delete category command.
+- make unhandled exception return friendly result to client.

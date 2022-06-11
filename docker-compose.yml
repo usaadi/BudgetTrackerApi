@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+  budgettrackerapi:
+    image: ${DOCKER_REGISTRY-}budgettrackerapi
+    build:
+      context: .
+      dockerfile: BudgetTrackerApi/Dockerfile
+    restart: always
+
+  db:
+    image: postgres:12
+    restart: always
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_USER_FILE: /run/secrets/db_user
+      POSTGRES_DB_FILE: /run/secrets/db_name
+      PGDATA: /data/postgres
+    volumes:
+      - db_data:/data/postgres
+    secrets:
+      - db_password
+      - db_user
+      - db_name
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5050:80"
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  db_user:
+    file: ./secrets/db_user.txt
+  db_name:
+    file: ./secrets/db_name.txt
+
+volumes:
+  db_data:
