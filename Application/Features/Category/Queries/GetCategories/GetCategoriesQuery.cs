@@ -12,6 +12,7 @@ public class GetCategoriesQuery : IRequest<CategoriesDto>
     public TransactionType TransactionType { get; set; }
     public int PageSize { get; set; }
     public int PageNumber { get; set; }
+    public bool NoPagination { get; set; }
 }
 
 public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, CategoriesDto>
@@ -38,10 +39,20 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
             .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value &&
             x.TransactionTypeLookupId == (int)request.TransactionType);
 
-        var items = await itemsQuery
-            .OrderBy(x => x.Name)
-            .Skip(offset)
-            .Take(limit)
+        var itemsOrdered = itemsQuery.OrderBy(x => x.Name);
+
+        IQueryable<Domain.Entities.Category>? itemsTaken;
+
+        if (request.NoPagination)
+        {
+            itemsTaken = itemsOrdered;
+        }
+        else
+        {
+            itemsTaken = itemsOrdered.Skip(offset).Take(limit);
+        }
+
+        var items = await itemsTaken
             .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
