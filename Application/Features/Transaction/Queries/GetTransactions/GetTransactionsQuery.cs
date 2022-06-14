@@ -63,10 +63,14 @@ public class GetTransactionQueryHandler : IRequestHandler<GetTransactionsQuery, 
             .Where(x => !x.IsDeleted && !x.Category.IsDeleted)
             .CountAsync(cancellationToken);
 
+        bool hasMore = totalCount > (request.PageNumber - 1) * request.PageSize + items.Count;
+
         return new TransactionsDto
         {
             Items = items,
             TotalCount = totalCount,
+            NextPageNumber = request.PageNumber + 1,
+            HasMore = hasMore
         };
     }
 }
