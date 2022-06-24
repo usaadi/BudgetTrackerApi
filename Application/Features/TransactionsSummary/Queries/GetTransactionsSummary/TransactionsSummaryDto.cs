@@ -9,5 +9,7 @@
 
         public List<TransactionsSummaryItemDto> Items { get; set; }
         public int TotalCount { get; set; }
+        public int NextPageNumber { get; set; }
+        public bool HasMore { get; set; }
     }
 }

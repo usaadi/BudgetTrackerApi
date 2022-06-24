@@ -8,5 +8,7 @@ public class CategoriesDto
     }
 
     public IList<CategoryDto> Items { get; set; }
-    public int TotalCount { get; internal set; }
+    public int TotalCount { get; set; }
+    public int NextPageNumber { get; set; }
+    public bool HasMore { get; set; }
 }
