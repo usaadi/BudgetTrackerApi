@@ -73,7 +73,7 @@ public class GetTransactionQueryHandler : IRequestHandler<GetTransactionsQuery, 
                     orderedQuery = itemsQuery.OrderBy(x => x.Amount);
                     break;
                 default:
-                    orderedQuery = itemsQuery;
+                    orderedQuery = itemsQuery.OrderByDescending(x => x.TransactionDate);
                     break;
             }
         }
@@ -94,7 +94,7 @@ public class GetTransactionQueryHandler : IRequestHandler<GetTransactionsQuery, 
                     orderedQuery = itemsQuery.OrderByDescending(x => x.Amount);
                     break;
                 default:
-                    orderedQuery = itemsQuery;
+                    orderedQuery = itemsQuery.OrderByDescending(x => x.TransactionDate);
                     break;
             }
         }
