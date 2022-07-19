@@ -13,6 +13,8 @@ public class GetCategoriesQuery : IRequest<CategoriesDto>
     public int PageSize { get; set; }
     public int PageNumber { get; set; }
     public bool NoPagination { get; set; }
+    public string? SortBy { get; set; }
+    public bool IsDesc { get; set; }
 }
 
 public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, CategoriesDto>
@@ -39,7 +41,17 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
             .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value &&
             x.TransactionTypeLookupId == (int)request.TransactionType);
 
-        var itemsOrdered = itemsQuery.OrderBy(x => x.Name);
+        var itemsOrdered = request.IsDesc ? request.SortBy switch
+        {
+            "name" => itemsQuery.OrderByDescending(x => x.Name),
+            "description" => itemsQuery.OrderByDescending(x => x.Description),
+            _ => itemsQuery.OrderBy(x => x.Name), // not bug: default should be ascending order
+        } : request.SortBy switch
+        {
+            "name" => itemsQuery.OrderBy(x => x.Name),
+            "description" => itemsQuery.OrderBy(x => x.Description),
+            _ => itemsQuery.OrderBy(x => x.Name),
+        };
 
         IQueryable<Domain.Entities.Category>? itemsTaken;
 
@@ -60,10 +72,14 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
             .Where(x => !x.IsDeleted)
             .CountAsync(cancellationToken);
 
+        bool hasMore = totalCount > (request.PageNumber - 1) * request.PageSize + items.Count;
+
         return new CategoriesDto
         {
             Items = items,
-            TotalCount = totalCount
+            TotalCount = totalCount,
+            NextPageNumber = request.PageNumber + 1,
+            HasMore = hasMore
         };
     }
 }

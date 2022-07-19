@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 public class CategoriesController : ApiControllerBase
 {
-    [HttpGet("{transactionType}/{pageSize}/{pageNumber}/{noPagination?}")]
+    [HttpGet("{transactionType}/{pageSize}/{pageNumber}/{sortBy?}/{isDesc?}/{noPagination?}")]
     [Authorize]
-    public async Task<ActionResult<CategoriesDto>> GetExpensesCategories(TransactionType transactionType, int pageSize, int pageNumber, bool noPagination = false)
+    public async Task<ActionResult<CategoriesDto>> GetCategories(TransactionType transactionType, int pageSize, int pageNumber, string? sortBy = null, bool isDesc = false, bool noPagination = false)
     {
         return await Mediator.Send(
             new GetCategoriesQuery
@@ -21,6 +21,8 @@ public class CategoriesController : ApiControllerBase
                 TransactionType = transactionType,
                 PageSize = pageSize,
                 PageNumber = pageNumber,
+                SortBy = sortBy,
+                IsDesc = isDesc,
                 NoPagination = noPagination
             });
     }
