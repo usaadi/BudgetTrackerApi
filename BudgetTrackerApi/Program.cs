@@ -1,14 +1,14 @@
-using Infrastructure;
 using Application;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Application.Common.Interfaces;
-using BudgetTrackerApi.Services;
 using BudgetTrackerApi.Filters;
+using BudgetTrackerApi.Services;
 using FluentValidation.AspNetCore;
-using Serilog;
-using Npgsql;
-using Microsoft.AspNetCore.HttpOverrides;
 using Helpers;
+using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Npgsql;
+using Serilog;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
