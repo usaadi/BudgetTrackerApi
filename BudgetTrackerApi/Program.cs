@@ -5,7 +5,6 @@ using BudgetTrackerApi.Services;
 using FluentValidation.AspNetCore;
 using Helpers;
 using Infrastructure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Npgsql;
 using Serilog;
@@ -49,7 +48,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 
 
 builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
@@ -62,16 +61,18 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
-     {
-         c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
-         c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-         {
-             ValidAudience = builder.Configuration["Auth0:Audience"],
-             ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
-         };
-     });
+builder.Services.AddMyAuthentication(builder.Configuration);
+
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+//     {
+//         c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+//         c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+//         {
+//             ValidAudience = builder.Configuration["Auth0:Audience"],
+//             ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
+//         };
+//     });
 
 builder.Services.AddAuthorization(o =>
 {

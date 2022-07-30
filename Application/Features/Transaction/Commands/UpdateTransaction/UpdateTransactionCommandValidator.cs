@@ -1,5 +1,4 @@
-﻿using Application.Common.Interfaces;
-using Application.Features.Category.Commands.CreateCategory;
+﻿using Application.Features.Category.Commands.CreateCategory;
 using FluentValidation;
 
 namespace Application.Features.Transaction.Commands.UpdateTransaction;
