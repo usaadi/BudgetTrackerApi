@@ -83,12 +83,28 @@ builder.Services.AddAuthorization(o =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+
+    // Initialise database
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetService<IApplicationDbContext>();
+        if (context is not null)
+        {
+            await context.MigrateAsync();
+        }
+    }
+}
+else
+{
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    //app.UseHsts();
+}
+
 app.UseSwagger();
 app.UseSwaggerUI();
-//}
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

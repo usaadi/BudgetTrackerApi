@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Application.Common.Interfaces;
-using Domain.Entities;
+﻿using Application.Common.Interfaces;
 using Domain.Common;
+using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace Infrastructure.Persistence;
@@ -61,5 +61,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         PrepareSaveChanges();
 
         return base.SaveChanges();
+    }
+
+    public async Task MigrateAsync()
+    {
+        await Database.MigrateAsync();
     }
 }
