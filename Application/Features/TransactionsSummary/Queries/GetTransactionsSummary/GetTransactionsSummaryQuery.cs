@@ -1,6 +1,5 @@
 ﻿using Application.Common.Interfaces;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -61,13 +60,13 @@ public class GetTransactionsSummaryQueryHandler : IRequestHandler<GetTransaction
             "category" => groupedItems.OrderByDescending(x => x.Key.Name),
             "description" => groupedItems.OrderByDescending(x => x.Key.Description),
             "sum" => groupedItems.OrderByDescending(x => x.Sum(y => y.Amount)),
-            _ => groupedItems,
+            _ => groupedItems.OrderBy(x => x.Key.Name),
         } : request.SortBy switch
         {
             "category" => groupedItems.OrderBy(x => x.Key.Name),
             "description" => groupedItems.OrderBy(x => x.Key.Description),
             "sum" => groupedItems.OrderBy(x => x.Sum(y => y.Amount)),
-            _ => groupedItems,
+            _ => groupedItems.OrderBy(x => x.Key.Name),
         };
 
         var items = await orderedQuery.Skip(offset)
