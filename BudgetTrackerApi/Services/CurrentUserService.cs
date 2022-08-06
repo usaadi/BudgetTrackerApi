@@ -34,7 +34,7 @@ public class CurrentUserService : ICurrentUserService
     {
         get
         {
-            var email = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var email = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == GeneralConstants.EmailClaimType)?.Value;
             return email;
         }
     }
@@ -43,7 +43,7 @@ public class CurrentUserService : ICurrentUserService
     {
         get
         {
-            var fullName = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+            var fullName = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == GeneralConstants.NameClaimType)?.Value;
             return fullName;
         }
     }

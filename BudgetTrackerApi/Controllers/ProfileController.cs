@@ -9,8 +9,9 @@ public class ProfileController : ApiControllerBase
 {
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<ProfileDto>> GetExpensesTransactions(GetProfileQuery query)
+    public async Task<ActionResult<ProfileDto>> GetExpensesTransactions()
     {
+        var query = new GetProfileQuery();
         var obj = await Mediator.Send(query);
         return obj;
     }
