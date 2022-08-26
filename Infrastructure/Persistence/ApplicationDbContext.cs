@@ -11,6 +11,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Category> Category => Set<Category>();
     public DbSet<Transaction> Transaction => Set<Transaction>();
     public DbSet<TransactionTypeLookup> TransactionTypeLookup => Set<TransactionTypeLookup>();
+    public DbSet<UserSetting> UserSetting => Set<UserSetting>();
 
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options) : base(options)

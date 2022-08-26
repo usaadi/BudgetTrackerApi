@@ -1,6 +1,8 @@
 ﻿using Application.Common.Interfaces;
 using Infrastructure.Persistence;
+using Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -24,12 +26,14 @@ public static class DependencyInjection
 
         var connectionString = conStrBuilder.ConnectionString;
 
-        services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>((sp, options) =>
             options.UseNpgsql(
                 connectionString,
-                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName))
+            .AddInterceptors(sp.GetRequiredService<ISaveChangesInterceptor>()));
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<ISaveChangesInterceptor, DefaultSavingChangesInterceptor>();
 
         return services;
     }
