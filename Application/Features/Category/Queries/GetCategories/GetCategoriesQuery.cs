@@ -12,6 +12,9 @@ public class GetCategoriesQuery : IRequest<CategoriesDto>
     public TransactionType TransactionType { get; set; }
     public int PageSize { get; set; }
     public int PageNumber { get; set; }
+    public bool NoPagination { get; set; }
+    public string? SortBy { get; set; }
+    public bool IsDesc { get; set; }
 }
 
 public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, CategoriesDto>
@@ -38,10 +41,30 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
             .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId.Value &&
             x.TransactionTypeLookupId == (int)request.TransactionType);
 
-        var items = await itemsQuery
-            .OrderBy(x => x.Name)
-            .Skip(offset)
-            .Take(limit)
+        var itemsOrdered = request.IsDesc ? request.SortBy switch
+        {
+            "name" => itemsQuery.OrderByDescending(x => x.Name),
+            "description" => itemsQuery.OrderByDescending(x => x.Description),
+            _ => itemsQuery.OrderBy(x => x.Name), // not bug: default should be ascending order
+        } : request.SortBy switch
+        {
+            "name" => itemsQuery.OrderBy(x => x.Name),
+            "description" => itemsQuery.OrderBy(x => x.Description),
+            _ => itemsQuery.OrderBy(x => x.Name),
+        };
+
+        IQueryable<Domain.Entities.Category>? itemsTaken;
+
+        if (request.NoPagination)
+        {
+            itemsTaken = itemsOrdered;
+        }
+        else
+        {
+            itemsTaken = itemsOrdered.Skip(offset).Take(limit);
+        }
+
+        var items = await itemsTaken
             .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
@@ -49,10 +72,14 @@ public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Cat
             .Where(x => !x.IsDeleted)
             .CountAsync(cancellationToken);
 
+        bool hasMore = totalCount > (request.PageNumber - 1) * request.PageSize + items.Count;
+
         return new CategoriesDto
         {
             Items = items,
-            TotalCount = totalCount
+            TotalCount = totalCount,
+            NextPageNumber = request.PageNumber + 1,
+            HasMore = hasMore
         };
     }
 }

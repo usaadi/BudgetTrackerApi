@@ -5,6 +5,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:4040;http://+:80
+      - DB_PASSWORD=budgettracker
     ports:
       - "80"
       - "4040:4040"

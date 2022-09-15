@@ -1,13 +1,12 @@
 ﻿using Application.Features.Category.Commands.CreateCategory;
 using Application.Common.Interfaces;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Transaction.Commands.CreateTransaction;
 
 public class CreateTransactionCommandValidator : AbstractValidator<CreateTransactionCommand>
 {
-    public const int maximumTransactions = 20;
+    //public const int maximumTransactions = 20;
 
     private readonly IApplicationDbContext _context;
     private readonly ICurrentUserService _currentUserService;
@@ -26,25 +25,25 @@ public class CreateTransactionCommandValidator : AbstractValidator<CreateTransac
         RuleFor(v => v.CreateCategoryCommand!)
             .SetValidator(createCategoryCommandValidator);
 
-        RuleFor(v => v.TransactionDate)
-            .MustAsync(NotExceedLimit).WithMessage("You have exceeded limit of created transactions. Please consider upgrading to add more.");
+        //RuleFor(v => v.TransactionDate)
+        //    .MustAsync(NotExceedLimit).WithMessage("You have exceeded limit of created transactions. Please consider upgrading to add more.");
     }
 
-    public async Task<bool> NotExceedLimit(CreateTransactionCommand command, DateTime transactionDate, CancellationToken cancellationToken)
-    {
-        const int defaultMaximumTransactions = 50;
+    //public async Task<bool> NotExceedLimit(CreateTransactionCommand command, DateTime transactionDate, CancellationToken cancellationToken)
+    //{
+    //    const int defaultMaximumTransactions = 50;
 
-        _ = int.TryParse(System.Environment.GetEnvironmentVariable("MAX_TRANSACTIONS_FREE"), out int maxTransactions);
+    //    _ = int.TryParse(System.Environment.GetEnvironmentVariable("MAX_TRANSACTIONS_FREE"), out int maxTransactions);
 
-        if (maxTransactions <= 0)
-        {
-            maxTransactions = defaultMaximumTransactions;
-        }
+    //    if (maxTransactions <= 0)
+    //    {
+    //        maxTransactions = defaultMaximumTransactions;
+    //    }
 
-        var count = await _context.Transaction
-            .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId)
-            .CountAsync();
+    //    var count = await _context.Transaction
+    //        .Where(x => x.UserUniqueId == _currentUserService.UserUniqueId)
+    //        .CountAsync();
 
-        return count < maxTransactions;
-    }
+    //    return count < maxTransactions;
+    //}
 }
