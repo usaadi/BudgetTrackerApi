@@ -1,12 +1,10 @@
 ﻿using Application.Common.Behaviors;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Application;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {
@@ -23,18 +21,13 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddMyAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddMyAuthorization(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+        services.AddAuthorization(o =>
         {
-            c.Authority = $"https://{configuration["Auth0:Domain"]}";
-            c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-            {
-                ValidAudience = configuration["Auth0:Audience"],
-                ValidIssuer = $"{configuration["Auth0:Domain"]}"
-            };
-            c.SecurityTokenValidators.Add(new CustomJwtSecurityTokenValidator(configuration["DemoToken"]));
+            o.AddPolicy("general:read-write", p => p.
+                RequireAuthenticatedUser().
+                RequireClaim("scope", "general:read-write"));
         });
 
         return services;
