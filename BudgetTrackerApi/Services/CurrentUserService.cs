@@ -1,10 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using BudgetTrackerApi.Constants;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace BudgetTrackerApi.Services;
 
@@ -31,6 +27,24 @@ public class CurrentUserService : ICurrentUserService
             {
                 return null;
             }
+        }
+    }
+
+    public string? Email
+    {
+        get
+        {
+            var email = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == GeneralConstants.EmailClaimType)?.Value;
+            return email;
+        }
+    }
+
+    public string? FullName
+    {
+        get
+        {
+            var fullName = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == GeneralConstants.NameClaimType)?.Value;
+            return fullName;
         }
     }
 }

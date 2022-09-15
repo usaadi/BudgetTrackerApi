@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Application.Common.Interfaces;
-using Domain.Entities;
+﻿using Application.Common.Interfaces;
 using Domain.Common;
+using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace Infrastructure.Persistence;
@@ -11,6 +11,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Category> Category => Set<Category>();
     public DbSet<Transaction> Transaction => Set<Transaction>();
     public DbSet<TransactionTypeLookup> TransactionTypeLookup => Set<TransactionTypeLookup>();
+    public DbSet<UserSetting> UserSetting => Set<UserSetting>();
 
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -61,5 +62,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         PrepareSaveChanges();
 
         return base.SaveChanges();
+    }
+
+    public async Task MigrateAsync()
+    {
+        await Database.MigrateAsync();
     }
 }
