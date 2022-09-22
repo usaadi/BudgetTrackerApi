@@ -20,7 +20,7 @@ public class CreateTransactionCommandValidator : AbstractValidator<CreateTransac
         _currentUserService = currentUserService;
 
         RuleFor(v => v.Description)
-            .MaximumLength(500).WithMessage("Description must not exceed 500 characters.");
+            .MaximumLength(100).WithMessage("Description must not exceed 100 characters.");
 
         RuleFor(v => v.CreateCategoryCommand!)
             .SetValidator(createCategoryCommandValidator);

@@ -16,11 +16,11 @@ public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategoryCo
 
         RuleFor(v => v.Name)
             .NotEmpty().WithMessage("Name is required.")
-            .MaximumLength(50).WithMessage("Name must not exceed 50 characters.")
+            .MaximumLength(20).WithMessage("Name must not exceed 20 characters.")
             .MustAsync(BeUniqueName).WithMessage("The specified name already exists.");
 
         RuleFor(v => v.Description)
-            .MaximumLength(100).WithMessage("Description must not exceed 100 characters.");
+            .MaximumLength(50).WithMessage("Description must not exceed 50 characters.");
     }
 
     public async Task<bool> BeUniqueName(UpdateCategoryCommand command, string name, CancellationToken cancellationToken)
